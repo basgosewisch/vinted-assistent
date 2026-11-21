@@ -1,0 +1,13 @@
+config.local.json
+work/
+outputs/
+*vinted-monitor.md
+*.pdf
+*.jpg
+*.jpeg
+*.png
+*.heic
+*.webp
+.env*
+__pycache__/
+.DS_Store
