@@ -1,6 +1,6 @@
 interface:
-  display_name: "Vinted-operatie"
-  short_description: "Van kledingfoto’s tot verkoop, dashboard en labels"
-  default_prompt: "Gebruik $vinted-assistent om mijn nieuwe foto’s en Vinted-verkoop af te handelen."
+  display_name: "Vinted Assistant"
+  short_description: "Clothing photos, listings, offers, reports and labels"
+  default_prompt: "Use $vinted-assistent to process my new clothing photos and manage my Vinted sales."
 policy:
   allow_implicit_invocation: true

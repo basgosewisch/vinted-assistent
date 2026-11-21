@@ -48,7 +48,7 @@ def stage_photo(path, asset_dir):
     before = fingerprint(path)
     contents = path.read_bytes()
     if not contents or before != fingerprint(path):
-        raise ValueError(f"Bestand is leeg of nog in gebruik: {path}")
+        raise ValueError(f"File is empty or still being written: {path}")
     key = hashlib.sha256(contents).hexdigest()
     existing = next(asset_dir.glob(f"{key}.*"), None)
     target = existing or asset_dir / f"{key}{path.suffix.lower()}"
@@ -67,13 +67,13 @@ def run(args):
         fcntl.flock(lock, fcntl.LOCK_EX)
         if args.command == "baseline":
             if state_path.exists():
-                raise ValueError("De Downloads-nulmeting bestaat al.")
+                raise ValueError("The Downloads baseline already exists.")
             snapshot = downloads_snapshot(downloads)
             write_atomic(state_path, json.dumps(snapshot).encode())
             return {"bestanden_in_nulmeting": len(snapshot)}
 
         if not state_path.exists():
-            raise ValueError("Leg eerst de Downloads-nulmeting vast met baseline.")
+            raise ValueError("Create the Downloads baseline with baseline first.")
         seen = json.loads(state_path.read_text())
         if args.command == "scan":
             current = downloads_snapshot(downloads)
@@ -83,9 +83,9 @@ def run(args):
         paths = [Path(value).expanduser().resolve(strict=True) for value in args.paths]
         for path in paths:
             if not is_image_file(path):
-                raise ValueError(f"Geen ondersteund fotobestand: {path}")
+                raise ValueError(f"Unsupported image file: {path}")
             if args.command == "ignore" and path.parent != downloads:
-                raise ValueError(f"Bestand staat buiten Downloads: {path}")
+                raise ValueError(f"File is outside Downloads: {path}")
 
         results = []
         if args.command == "stage":

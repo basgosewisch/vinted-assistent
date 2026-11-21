@@ -1,55 +1,55 @@
-# Vinted-assistent
+# Vinted Assistant
 
-Een Codex-skill die helpt om kledingfoto’s te verwerken, advertenties te plaatsen, reacties en biedingen af te handelen en verkoop bij te houden.
+A Codex skill for turning clothing photos into listings, handling buyer conversations and counteroffers, tracking sales, and preparing shipping labels. English is the default language. Buyer messages follow the buyer’s language when known; listing language is configurable.
 
-## Nodig
+## Requirements
 
-- Codex desktop met toegang tot lokale skills en browserbediening.
-- Een ingelogde Vinted-sessie in de ingebouwde browser (IAB), met ondersteunde foto-uploadtools.
-- Leesrechten op Downloads en schrijfrechten op een eigen werkmap.
-- Python 3 voor het intakescript; alleen standaardbibliotheek, geen pip-packages nodig.
-- Codex-automations voor geplande runs. De skill zelf is geen scheduler of zelfstandige server.
-- Optioneel een printer en ondersteunde IAB-printbediening. Zonder die bediening kunnen labels alleen worden klaargezet.
+- Codex desktop with local skills and browser-control tools.
+- A signed-in Vinted session in the built-in browser (IAB), with supported photo uploads.
+- Read access to Downloads and write access to a private workspace.
+- Python 3 for photo intake. The script uses only the standard library.
+- Codex automations for scheduled runs. The skill is not a scheduler or standalone server.
+- Optional printer and supported IAB print controls. Without these, labels can only be prepared.
 
-Geen Vinted-API-sleutel of Gmail-connector nodig. Toolbeschikbaarheid moet in de eigen Codex-omgeving worden gecontroleerd.
+No Vinted API key or Gmail connector is required. Check tool availability in your own Codex environment.
 
-## Installeren
+## Setup
 
-1. Kopieer deze repository naar `~/.codex/skills/vinted-assistent/`.
-2. Maak een afzonderlijke privéwerkmap. Kopieer `config.example.json` daar als `config.local.json` en vul account, paden en voorkeuren in. Geef Codex die werkmap bij de eerste opdracht.
-3. Open Vinted in IAB en log zelf in. Laat Codex het account controleren en het mandaat afspreken voor publiceren, prijzen, berichten, tegenbiedingen en printen.
-4. Start met: ‘Gebruik $vinted-assistent. Mijn werkmap is [pad]. Er staan nieuwe kledingfoto’s in Downloads.’
-5. Laat Codex ontbrekende log- en intakebestanden aanmaken. Bestaande foto’s eerst inventariseren; leg pas na beoordeling een baseline vast. Publiceer niets dubbel.
+1. Copy this repository to `~/.codex/skills/vinted-assistent/`.
+2. Create a separate private workspace. Copy `config.example.json` there as `config.local.json`, then fill in your account, paths, language, and preferences. Tell Codex which workspace to use.
+3. Open Vinted in IAB and sign in yourself. Have Codex verify the account and establish authorization for publishing, pricing, messaging, counteroffers, and printing.
+4. Start with: “Use $vinted-assistent. My workspace is [path]. There are new clothing photos in Downloads.”
+5. Let Codex create missing logs and intake state. Inventory existing photos before establishing the baseline to avoid missing files or duplicating listings.
 
-De configuratie is een leesbaar contract voor de agent. Het intakescript krijgt Downloads en de intakewerkmap expliciet via CLI-argumenten; het leest JSON niet zelfstandig. `<workspace>`, `<downloads>` en `<skill-dir>` in de instructies worden uit de eigen configuratie en installatie ingevuld.
+Configuration is a readable contract for the agent. The intake script receives Downloads and state directories through CLI arguments; it does not read JSON itself. Replace `<workspace>`, `<downloads>`, and `<skill-dir>` in instructions using your configuration and installation paths.
 
-## Werkwijze
+## Workflow
 
-Foto’s worden per artikel gegroepeerd. Ontbreekt een prijs, dan vraagt Codex een indicatie of toestemming zelf te bepalen. Een duidelijke menselijke draagfoto gaat vooraan. Merken, maten en conditie worden gebaseerd op foto’s, labels en de eigenaar zijn informatie.
+Photos are grouped by item. If a price is missing, Codex asks for an indication or permission to choose one. A clear real photo of someone wearing the item becomes the cover when available. Sizes, brands, and condition come from images, labels, and owner information.
 
-Voor onderhandelingen is de standaard maximaal 15% korting op de actuele vraagprijs, met hogere artikelbodems gerespecteerd. Stel het mandaat en eventuele afwijkingen vooraf vast. Geen automatische acceptatie, prijsverlaging of herhaalde saver-berichten. De precieze uitvoering staat in [SKILL.md](SKILL.md).
+Default maximum counteroffer discount is 15% below asking price, respecting higher item floors. Agree on authorization and exceptions first. No automatic offer acceptance, asking-price changes, or repeated saver follow-ups. Detailed instructions are in [SKILL.md](SKILL.md).
 
-## Terugkerende taken instellen
+## Scheduling
 
-Laat Codex bestaande automations eerst controleren en daarna via de automation-tool instellen, in je eigen tijdzone:
+Have Codex inspect existing automations before creating or updating jobs in your timezone:
 
-| Moment | Werk |
+| When | Work |
 | --- | --- |
-| Elk uur | Nieuwe reacties en biedingen |
-| Dagelijks 09:00 | Dashboard en dagupdate |
-| Dagelijks 12:00 | Foto-intake, labels en aparte eenmalige favorietenopvolging |
-| Zondag 18:30 | Weekoverzicht |
+| Hourly | New messages and offers |
+| Daily 09:00 | Dashboard and daily summary |
+| Daily 12:00 | Photo intake, labels, and separate one-time favorites follow-up |
+| Sunday 18:30 | Weekly report |
 
-Deze repository maakt geen automations aan. Geplande uitvoering vereist dat de betreffende Codex-omgeving toegang tot bestanden, browser en sessie heeft. Een geplande start bewijst geen geslaagde uitvoering.
+This repository does not create automations. Scheduled execution requires access to files, browser tools, and the signed-in session during each run. A scheduled start is not evidence of successful completion.
 
-## Dashboard en labels
+## Dashboard and labels
 
-De skill schrijft gedateerde waarnemingen in de privéwerkmap en houdt het dashboard daar bij. Een bestaand persoonlijk dashboard wordt niet meegeleverd. Laat Codex bij eerste gebruik een dashboard maken met omzet, views, saves, sales en alleen vergelijkbare conversieratio’s. Betaalde orders, voltooide verkopen en bankuitbetalingen blijven afzonderlijk. Vraagprijzen tellen niet als omzet.
+The skill records dated observations and maintains a dashboard in your private workspace. No personal dashboard or sales history is bundled. On first use, ask Codex to create a dashboard covering revenue, views, saves, sales, and comparable conversion ratios. Keep paid orders, completed sales, and bank payouts separate. Asking prices are not revenue.
 
-Label-PDF’s en printstatus horen in de privéwerkmap, nooit in Git. Print alleen voor nog te verzenden orders en maximaal eenmaal per labelversie. Een printopdracht is geen bewijs dat papier uit de printer kwam. Geen blinde herprints bij onzekere status.
+Keep PDFs and print state outside Git. Print only for orders awaiting shipment, at most once per label version. A submitted print job does not prove physical output. Never blindly reprint an uncertain job.
 
-## Status
+## Status and privacy
 
-Eerste versie, afgeleid van een persoonlijke werkwijze. Het intakescript is lokaal controleerbaar. Browseracties, onderhandelingen en fysieke printopdrachten vereisen nog een volledige test in iedere nieuwe omgeving. Geen garantie op ononderbroken uitvoering bij een gewijzigde Vinted-interface, sessieverlies of platformlimieten.
+Initial version adapted from a personal workflow. Intake scanning, staging, deduplication, and preservation of original files have been tested locally. Browser actions, negotiations, and physical printing still need end-to-end validation in each new environment. Interface changes, expired sessions, and platform limits can interrupt execution.
 
-Accountgegevens, cookies, foto's, ordergegevens en labels blijven lokaal. De toestemming van de maker geldt niet voor andere gebruikers van deze skill.
+Account details, cookies, photos, order data, and labels stay local. The creator’s authorization does not transfer to other users of this skill.

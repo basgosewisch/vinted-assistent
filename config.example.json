@@ -1,10 +1,15 @@
 {
-  "account": {"username": "YOUR_VINTED_USERNAME", "member_id": "YOUR_MEMBER_ID"},
+  "account": {
+    "username": "YOUR_VINTED_USERNAME",
+    "member_id": "YOUR_MEMBER_ID"
+  },
   "workspace": "/absolute/path/to/private-vinted-workspace",
   "downloads": "/absolute/path/to/Downloads",
   "timezone": "Europe/Amsterdam",
   "maximum_discount_percent": 15,
   "item_price_floors": {},
   "browser": "iab",
-  "print_labels": false
+  "print_labels": false,
+  "language": "en",
+  "listing_language": "en"
 }
